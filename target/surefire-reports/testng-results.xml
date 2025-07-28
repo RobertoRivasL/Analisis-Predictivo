@@ -2,12 +2,12 @@
 <testng-results ignored="0" total="0" passed="0" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2025-07-28T15:39:23 CLT" name="AutomatizacionPruebasSuite" finished-at="2025-07-28T15:39:23 CLT" duration-ms="160">
+  <suite started-at="2025-07-28T16:08:31 CLT" name="AutomatizacionPruebasSuite" finished-at="2025-07-28T16:08:31 CLT" duration-ms="164">
     <groups>
     </groups>
-    <test started-at="2025-07-28T15:39:23 CLT" name="PruebasHumo" finished-at="2025-07-28T15:39:23 CLT" duration-ms="19">
+    <test started-at="2025-07-28T16:08:31 CLT" name="PruebasHumo" finished-at="2025-07-28T16:08:31 CLT" duration-ms="22">
     </test> <!-- PruebasHumo -->
-    <test started-at="2025-07-28T15:39:23 CLT" name="PruebasRegresion" finished-at="2025-07-28T15:39:23 CLT" duration-ms="1">
+    <test started-at="2025-07-28T16:08:31 CLT" name="PruebasRegresion" finished-at="2025-07-28T16:08:31 CLT" duration-ms="0">
     </test> <!-- PruebasRegresion -->
   </suite> <!-- AutomatizacionPruebasSuite -->
 </testng-results>

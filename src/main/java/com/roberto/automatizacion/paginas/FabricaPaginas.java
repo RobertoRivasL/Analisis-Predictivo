@@ -7,35 +7,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Factory para la creación y gestión de Page Objects
+ * Fábrica para la creación y gestión de Page Objects
  * Implementa patrones: Factory, Singleton, Cache
  * Principios SOLID aplicados: SRP, OCP, DIP
  *
  * @author Roberto Rivas Lopez
  */
-public final class PageFactory {
+public final class FabricaPaginas {
 
-    private static final Logger logger = LoggerFactory.getLogger(PageFactory.class);
-    private static volatile PageFactory instancia;
+    private static final Logger logger = LoggerFactory.getLogger(FabricaPaginas.class);
+    private static volatile FabricaPaginas instancia;
 
     // Cache de páginas para reutilización
-    private final Map<Class<? extends BasePage>, BasePage> cachePages = new HashMap<>();
+    private final Map<Class<? extends PaginaBase>, PaginaBase> cachePaginas = new HashMap<>();
 
     // Flag para habilitar/deshabilitar cache
     private boolean cacheHabilitado = true;
 
-    private PageFactory() {
-        logger.info("PageFactory inicializado");
+    private FabricaPaginas() {
+        logger.info("FabricaPaginas inicializada");
     }
 
     /**
-     * Obtiene la instancia única del PageFactory (Singleton thread-safe)
+     * Obtiene la instancia única de la FabricaPaginas (Singleton thread-safe)
      */
-    public static PageFactory getInstancia() {
+    public static FabricaPaginas getInstancia() {
         if (instancia == null) {
-            synchronized (PageFactory.class) {
+            synchronized (FabricaPaginas.class) {
                 if (instancia == null) {
-                    instancia = new PageFactory();
+                    instancia = new FabricaPaginas();
                 }
             }
         }
@@ -45,67 +45,67 @@ public final class PageFactory {
     /**
      * Crea una nueva instancia de página del tipo especificado
      *
-     * @param clasePageObject Clase del Page Object a crear
+     * @param clasePaginaObjeto Clase del Page Object a crear
      * @return Nueva instancia de la página
      */
     @SuppressWarnings("unchecked")
-    public <T extends BasePage> T crearPagina(Class<T> clasePageObject) {
+    public <T extends PaginaBase> T crearPagina(Class<T> clasePaginaObjeto) {
         try {
-            logger.debug("Creando página: {}", clasePageObject.getSimpleName());
+            logger.debug("Creando página: {}", clasePaginaObjeto.getSimpleName());
 
             // Si el cache está habilitado, intentar obtener de cache primero
-            if (cacheHabilitado && cachePages.containsKey(clasePageObject)) {
-                T paginaCacheada = (T) cachePages.get(clasePageObject);
-                logger.debug("Página obtenida del cache: {}", clasePageObject.getSimpleName());
+            if (cacheHabilitado && cachePaginas.containsKey(clasePaginaObjeto)) {
+                T paginaCacheada = (T) cachePaginas.get(clasePaginaObjeto);
+                logger.debug("Página obtenida del cache: {}", clasePaginaObjeto.getSimpleName());
                 return paginaCacheada;
             }
 
             // Crear nueva instancia usando reflexión
-            T nuevaPagina = clasePageObject.getDeclaredConstructor().newInstance();
+            T nuevaPagina = clasePaginaObjeto.getDeclaredConstructor().newInstance();
 
             // Validar que la página se creó correctamente
             if (nuevaPagina.validarPagina()) {
                 // Agregar al cache si está habilitado
                 if (cacheHabilitado) {
-                    cachePages.put(clasePageObject, nuevaPagina);
-                    logger.debug("Página agregada al cache: {}", clasePageObject.getSimpleName());
+                    cachePaginas.put(clasePaginaObjeto, nuevaPagina);
+                    logger.debug("Página agregada al cache: {}", clasePaginaObjeto.getSimpleName());
                 }
 
-                logger.info("Página {} creada y validada exitosamente", clasePageObject.getSimpleName());
+                logger.info("Página {} creada y validada exitosamente", clasePaginaObjeto.getSimpleName());
                 return nuevaPagina;
             } else {
-                logger.warn("Página {} creada pero falló validación", clasePageObject.getSimpleName());
+                logger.warn("Página {} creada pero falló validación", clasePaginaObjeto.getSimpleName());
                 return nuevaPagina; // Retornar de todos modos, la validación es informativa
             }
 
         } catch (Exception e) {
-            logger.error("Error creando página {}: {}", clasePageObject.getSimpleName(), e.getMessage());
-            throw new RuntimeException("No se pudo crear la página: " + clasePageObject.getSimpleName(), e);
+            logger.error("Error creando página {}: {}", clasePaginaObjeto.getSimpleName(), e.getMessage());
+            throw new RuntimeException("No se pudo crear la página: " + clasePaginaObjeto.getSimpleName(), e);
         }
     }
 
     /**
      * Obtiene una página existente del cache o crea una nueva
      *
-     * @param clasePageObject Clase del Page Object
+     * @param clasePaginaObjeto Clase del Page Object
      * @return Instancia de la página
      */
-    public <T extends BasePage> T obtenerPagina(Class<T> clasePageObject) {
-        return crearPagina(clasePageObject);
+    public <T extends PaginaBase> T obtenerPagina(Class<T> clasePaginaObjeto) {
+        return crearPagina(clasePaginaObjeto);
     }
 
     /**
-     * Crea una página específica - LoginPage
+     * Crea una página específica - PaginaLogin
      */
-    public LoginPage crearLoginPage() {
-        return crearPagina(LoginPage.class);
+    public PaginaLogin crearPaginaLogin() {
+        return crearPagina(PaginaLogin.class);
     }
 
     /**
-     * Crea una página específica - HomePage
+     * Crea una página específica - PaginaInicio
      */
-    public HomePage crearHomePage() {
-        return crearPagina(HomePage.class);
+    public PaginaInicio crearPaginaInicio() {
+        return crearPagina(PaginaInicio.class);
     }
 
     /**
@@ -113,10 +113,10 @@ public final class PageFactory {
      * Útil para configuraciones dinámicas
      */
     @SuppressWarnings("unchecked")
-    public <T extends BasePage> T crearPaginaPorNombre(String nombreClase) {
+    public <T extends PaginaBase> T crearPaginaPorNombre(String nombreClase) {
         try {
-            Class<T> clasePageObject = (Class<T>) Class.forName(nombreClase);
-            return crearPagina(clasePageObject);
+            Class<T> clasePaginaObjeto = (Class<T>) Class.forName(nombreClase);
+            return crearPagina(clasePaginaObjeto);
         } catch (ClassNotFoundException e) {
             logger.error("Clase de página no encontrada: {}", nombreClase);
             throw new RuntimeException("Clase de página no encontrada: " + nombreClase, e);
@@ -127,8 +127,8 @@ public final class PageFactory {
      * Limpia el cache de páginas
      */
     public void limpiarCache() {
-        logger.info("Limpiando cache de páginas. Páginas en cache: {}", cachePages.size());
-        cachePages.clear();
+        logger.info("Limpiando cache de páginas. Páginas en cache: {}", cachePaginas.size());
+        cachePaginas.clear();
     }
 
     /**
@@ -154,35 +154,35 @@ public final class PageFactory {
      * Obtiene el número de páginas en cache
      */
     public int obtenerTamanioCache() {
-        return cachePages.size();
+        return cachePaginas.size();
     }
 
     /**
      * Remueve una página específica del cache
      */
-    public void removerDelCache(Class<? extends BasePage> clasePageObject) {
-        if (cachePages.remove(clasePageObject) != null) {
-            logger.debug("Página {} removida del cache", clasePageObject.getSimpleName());
+    public void removerDelCache(Class<? extends PaginaBase> clasePaginaObjeto) {
+        if (cachePaginas.remove(clasePaginaObjeto) != null) {
+            logger.debug("Página {} removida del cache", clasePaginaObjeto.getSimpleName());
         }
     }
 
     /**
      * Verifica si una página está en cache
      */
-    public boolean estaEnCache(Class<? extends BasePage> clasePageObject) {
-        return cachePages.containsKey(clasePageObject);
+    public boolean estaEnCache(Class<? extends PaginaBase> clasePaginaObjeto) {
+        return cachePaginas.containsKey(clasePaginaObjeto);
     }
 
     /**
-     * Builder para creación fluida de páginas con configuraciones
+     * Constructor para creación fluida de páginas con configuraciones
      */
     public static class ConstructorPagina {
-        private final PageFactory factory;
+        private final FabricaPaginas fabrica;
         private boolean validarAlCrear = true;
         private boolean usarCache = true;
 
         public ConstructorPagina() {
-            this.factory = PageFactory.getInstancia();
+            this.fabrica = FabricaPaginas.getInstancia();
         }
 
         public ConstructorPagina conValidacion(boolean validar) {
@@ -195,23 +195,23 @@ public final class PageFactory {
             return this;
         }
 
-        public <T extends BasePage> T construir(Class<T> clasePageObject) {
+        public <T extends PaginaBase> T construir(Class<T> clasePaginaObjeto) {
             // Configurar temporalmente el cache según la preferencia
-            boolean cacheOriginal = factory.esCacheHabilitado();
-            factory.configurarCache(usarCache);
+            boolean cacheOriginal = fabrica.esCacheHabilitado();
+            fabrica.configurarCache(usarCache);
 
             try {
-                T pagina = factory.crearPagina(clasePageObject);
+                T pagina = fabrica.crearPagina(clasePaginaObjeto);
 
                 if (validarAlCrear && !pagina.validarPagina()) {
-                    logger.warn("Advertencia: Página {} no pasó validación", clasePageObject.getSimpleName());
+                    logger.warn("Advertencia: Página {} no pasó validación", clasePaginaObjeto.getSimpleName());
                 }
 
                 return pagina;
 
             } finally {
                 // Restaurar configuración original del cache
-                factory.configurarCache(cacheOriginal);
+                fabrica.configurarCache(cacheOriginal);
             }
         }
     }
@@ -221,5 +221,144 @@ public final class PageFactory {
      */
     public static ConstructorPagina constructor() {
         return new ConstructorPagina();
+    }
+
+    // ========================================
+    // MÉTODOS DE UTILIDAD Y ESTADÍSTICAS
+    // ========================================
+
+    /**
+     * Obtiene estadísticas del cache de páginas
+     */
+    public Map<String, Object> obtenerEstadisticasCache() {
+        Map<String, Object> estadisticas = new HashMap<>();
+
+        estadisticas.put("cacheHabilitado", cacheHabilitado);
+        estadisticas.put("tamanioCache", cachePaginas.size());
+        estadisticas.put("tiposPaginasEnCache", cachePaginas.keySet().stream()
+                .map(Class::getSimpleName)
+                .toList());
+
+        logger.debug("Estadísticas del cache: {}", estadisticas);
+        return estadisticas;
+    }
+
+    /**
+     * Invalida y recrea una página específica en el cache
+     */
+    public <T extends PaginaBase> T invalidarYRecrearPagina(Class<T> clasePaginaObjeto) {
+        logger.info("Invalidando y recreando página: {}", clasePaginaObjeto.getSimpleName());
+
+        // Remover del cache si existe
+        removerDelCache(clasePaginaObjeto);
+
+        // Crear nueva instancia
+        return crearPagina(clasePaginaObjeto);
+    }
+
+    /**
+     * Valida todas las páginas en el cache
+     */
+    public Map<String, Boolean> validarTodasLasPaginasEnCache() {
+        logger.info("Validando todas las páginas en cache");
+
+        Map<String, Boolean> resultadosValidacion = new HashMap<>();
+
+        for (Map.Entry<Class<? extends PaginaBase>, PaginaBase> entrada : cachePaginas.entrySet()) {
+            String nombreClase = entrada.getKey().getSimpleName();
+            PaginaBase pagina = entrada.getValue();
+
+            try {
+                boolean esValida = pagina.validarPagina();
+                resultadosValidacion.put(nombreClase, esValida);
+                logger.debug("Validación de {} en cache: {}", nombreClase, esValida);
+            } catch (Exception e) {
+                logger.warn("Error validando {} en cache: {}", nombreClase, e.getMessage());
+                resultadosValidacion.put(nombreClase, false);
+            }
+        }
+
+        logger.info("Validación de cache completada: {}", resultadosValidacion);
+        return resultadosValidacion;
+    }
+
+    /**
+     * Limpia páginas inválidas del cache
+     */
+    public int limpiarPaginasInvalidasDelCache() {
+        logger.info("Limpiando páginas inválidas del cache");
+
+        Map<String, Boolean> validaciones = validarTodasLasPaginasEnCache();
+        int paginasRemovidas = 0;
+
+        for (Map.Entry<String, Boolean> validacion : validaciones.entrySet()) {
+            if (!validacion.getValue()) {
+                // Encontrar la clase correspondiente y removerla
+                cachePaginas.entrySet().removeIf(entrada -> {
+                    boolean debeRemover = entrada.getKey().getSimpleName().equals(validacion.getKey());
+                    if (debeRemover) {
+                        logger.debug("Removiendo página inválida del cache: {}", validacion.getKey());
+                    }
+                    return debeRemover;
+                });
+                paginasRemovidas++;
+            }
+        }
+
+        logger.info("Páginas inválidas removidas del cache: {}", paginasRemovidas);
+        return paginasRemovidas;
+    }
+
+    // ========================================
+    // MÉTODOS DE CONFIGURACIÓN AVANZADA
+    // ========================================
+
+    /**
+     * Precarga páginas comunes en el cache
+     */
+    public void precargarPaginasComunes() {
+        logger.info("Precargando páginas comunes en cache");
+
+        try {
+            // Precargar páginas más utilizadas
+            crearPaginaLogin();
+            logger.debug("PaginaLogin precargada");
+
+            crearPaginaInicio();
+            logger.debug("PaginaInicio precargada");
+
+            logger.info("Precarga de páginas completada. Cache actual: {}", cachePaginas.size());
+
+        } catch (Exception e) {
+            logger.error("Error durante precarga de páginas: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Configura el comportamiento de la fábrica
+     */
+    public void configurarComportamiento(boolean habilitarCache, boolean precargarPaginas) {
+        logger.info("Configurando comportamiento de FabricaPaginas - Cache: {}, Precarga: {}",
+                habilitarCache, precargarPaginas);
+
+        configurarCache(habilitarCache);
+
+        if (precargarPaginas && habilitarCache) {
+            precargarPaginasComunes();
+        }
+    }
+
+    /**
+     * Obtiene información completa del estado de la fábrica
+     */
+    public Map<String, Object> obtenerInformacionCompleta() {
+        Map<String, Object> informacion = new HashMap<>();
+
+        informacion.put("instanciaActiva", instancia != null);
+        informacion.put("estadisticasCache", obtenerEstadisticasCache());
+        informacion.put("timestampCreacion", System.currentTimeMillis());
+
+        logger.debug("Información completa de FabricaPaginas generada");
+        return informacion;
     }
 }
