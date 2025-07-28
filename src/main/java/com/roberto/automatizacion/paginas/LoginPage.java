@@ -1,4 +1,4 @@
-package com.roberto.automatizacion.pages;
+package com.roberto.automatizacion.paginas;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -147,7 +147,7 @@ public class LoginPage extends BasePage {
                 .clickBotonLogin();
 
         // Esperar a que la página se procese
-        Thread.sleep(2000);
+        esperarProcesamiento(2000);
     }
 
     /**
@@ -163,7 +163,7 @@ public class LoginPage extends BasePage {
                 .clickBotonLogin();
 
         // Esperar a que la página se procese
-        Thread.sleep(2000);
+        esperarProcesamiento(2000);
     }
 
     /**
@@ -411,7 +411,7 @@ public class LoginPage extends BasePage {
             realizarLogin(usuario, contrasena);
 
             // Verificar que no hay mensajes de error después del login
-            Thread.sleep(2000); // Esperar procesamiento
+            esperarProcesamiento(2000); // Esperar procesamiento
 
             boolean loginExitoso = !esMensajeErrorVisible();
             logger.info("Login rápido completado exitosamente: {}", loginExitoso);
@@ -488,4 +488,6 @@ public class LoginPage extends BasePage {
             return false;
         }
     }
+
+    // Método heredado de BasePage - no necesita redefinirse
 }

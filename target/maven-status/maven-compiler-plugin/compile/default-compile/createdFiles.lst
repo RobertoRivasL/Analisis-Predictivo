@@ -1,7 +1,13 @@
+com\roberto\automatizacion\config\ConfigManager.class
+com\roberto\automatizacion\paginas\BasePage.class
+com\roberto\automatizacion\paginas\PageFactory$ConstructorPagina.class
+com\roberto\automatizacion\utilidades\UtilidadesPagina.class
 com\roberto\automatizacion\configuracion\ConfiguracionAmbiente.class
 com\roberto\automatizacion\listeners\ListenerTestNG.class
-com\roberto\automatizacion\config\ConfigManager.class
 com\roberto\automatizacion\utilidades\UtilidadesScreenshot.class
 com\roberto\automatizacion\core\DriverManager.class
+com\roberto\automatizacion\paginas\HomePage.class
 com\roberto\automatizacion\core\DriverManager$TipoNavegador.class
+com\roberto\automatizacion\paginas\PageFactory.class
 com\roberto\automatizacion\factory\DriverFactory.class
+com\roberto\automatizacion\paginas\LoginPage.class

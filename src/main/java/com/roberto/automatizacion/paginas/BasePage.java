@@ -1,4 +1,4 @@
-package com.roberto.automatizacion.pages;
+package com.roberto.automatizacion.paginas;
 
 import com.roberto.automatizacion.core.DriverManager;
 import com.roberto.automatizacion.config.ConfigManager;
@@ -278,7 +278,7 @@ public abstract class BasePage {
 
             for (char caracter : texto.toCharArray()) {
                 elemento.sendKeys(String.valueOf(caracter));
-                Thread.sleep(delayMilisegundos);
+                esperarProcesamiento(delayMilisegundos);
             }
 
             logger.debug("Texto '{}' escrito lentamente en: {}", texto, localizador);
@@ -423,7 +423,7 @@ public abstract class BasePage {
         try {
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", elemento);
-            Thread.sleep(500); // Pequeña pausa para que el scroll se complete
+            esperarProcesamiento(500); // Pequeña pausa para que el scroll se complete
             logger.debug("Desplazado a elemento");
         } catch (Exception e) {
             logger.warn("Error desplazándose a elemento: {}", e.getMessage());
@@ -607,6 +607,22 @@ public abstract class BasePage {
         } catch (Exception e) {
             logger.error("Error validando página {}: {}", this.getClass().getSimpleName(), e.getMessage());
             return false;
+        }
+    }
+
+    // ========================================
+    // MÉTODO UTILITARIO PARA MANEJO DE ESPERAS
+    // ========================================
+
+    /**
+     * Método utilitario para manejar esperas con InterruptedException
+     */
+    protected void esperarProcesamiento(long milisegundos) {
+        try {
+            Thread.sleep(milisegundos);
+        } catch (InterruptedException e) {
+            logger.warn("Interrupción durante espera de procesamiento: {}", e.getMessage());
+            Thread.currentThread().interrupt(); // Restaurar el estado de interrupción
         }
     }
 }

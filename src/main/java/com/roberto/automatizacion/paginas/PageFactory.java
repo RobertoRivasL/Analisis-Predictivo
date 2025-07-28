@@ -1,4 +1,4 @@
-package com.roberto.automatizacion.pages;
+package com.roberto.automatizacion.paginas;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +102,7 @@ public final class PageFactory {
     }
 
     /**
-     * Crea una página específica - HomePage (cuando la creates)
+     * Crea una página específica - HomePage
      */
     public HomePage crearHomePage() {
         return crearPagina(HomePage.class);
@@ -176,21 +176,21 @@ public final class PageFactory {
     /**
      * Builder para creación fluida de páginas con configuraciones
      */
-    public static class PageBuilder {
+    public static class ConstructorPagina {
         private final PageFactory factory;
         private boolean validarAlCrear = true;
         private boolean usarCache = true;
 
-        public PageBuilder() {
+        public ConstructorPagina() {
             this.factory = PageFactory.getInstancia();
         }
 
-        public PageBuilder conValidacion(boolean validar) {
+        public ConstructorPagina conValidacion(boolean validar) {
             this.validarAlCrear = validar;
             return this;
         }
 
-        public PageBuilder conCache(boolean cache) {
+        public ConstructorPagina conCache(boolean cache) {
             this.usarCache = cache;
             return this;
         }
@@ -217,9 +217,9 @@ public final class PageFactory {
     }
 
     /**
-     * Crea un nuevo PageBuilder para construcción fluida
+     * Crea un nuevo ConstructorPagina para construcción fluida
      */
-    public static PageBuilder builder() {
-        return new PageBuilder();
+    public static ConstructorPagina constructor() {
+        return new ConstructorPagina();
     }
 }

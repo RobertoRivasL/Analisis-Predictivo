@@ -1,6 +1,5 @@
-package com.roberto.automatizacion.utils;
+package com.roberto.automatizacion.utilidades;
 
-import com.roberto.automatizacion.core.DriverManager;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -18,12 +17,12 @@ import java.util.Set;
  *
  * @author Roberto Rivas Lopez
  */
-public final class PageUtils {
+public final class UtilidadesPagina {
 
-    private static final Logger logger = LoggerFactory.getLogger(PageUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(UtilidadesPagina.class);
 
     // Constructor privado para evitar instanciación
-    private PageUtils() {
+    private UtilidadesPagina() {
         throw new UnsupportedOperationException("Clase utilitaria no debe ser instanciada");
     }
 
@@ -196,12 +195,7 @@ public final class PageUtils {
                 logger.warn("Intento {} falló para click en {}: {}", intento, localizador, e.getMessage());
 
                 if (intento < maxReintentos) {
-                    try {
-                        Thread.sleep(1000); // Esperar 1 segundo entre reintentos
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
+                    esperarProcesamiento(1000); // Esperar 1 segundo entre reintentos
                 }
             }
         }
@@ -222,7 +216,7 @@ public final class PageUtils {
 
             // Desplazarse al elemento
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", elemento);
-            Thread.sleep(500);
+            esperarProcesamiento(500);
 
             // Limpiar campo
             elemento.clear();
@@ -616,6 +610,7 @@ public final class PageUtils {
             JavascriptExecutor js = (JavascriptExecutor) driver;
 
             // Verificar errores en la consola (método básico)
+            @SuppressWarnings("unchecked")
             List<Object> errores = (List<Object>) js.executeScript(
                     "return window.jsErrors || [];"
             );
@@ -748,6 +743,22 @@ public final class PageUtils {
         } else if (tamanio != null) {
             driver.manage().window().setSize(tamanio);
             logger.debug("Ventana redimensionada a: {}x{}", tamanio.width, tamanio.height);
+        }
+    }
+
+    // ========================================
+    // MÉTODO UTILITARIO PARA MANEJO DE ESPERAS
+    // ========================================
+
+    /**
+     * Método utilitario para manejar esperas con InterruptedException
+     */
+    private static void esperarProcesamiento(long milisegundos) {
+        try {
+            Thread.sleep(milisegundos);
+        } catch (InterruptedException e) {
+            logger.warn("Interrupción durante espera de procesamiento: {}", e.getMessage());
+            Thread.currentThread().interrupt(); // Restaurar el estado de interrupción
         }
     }
 }

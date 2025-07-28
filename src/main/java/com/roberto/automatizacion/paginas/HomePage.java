@@ -1,4 +1,4 @@
-package com.roberto.automatizacion.pages;
+package com.roberto.automatizacion.paginas;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -152,11 +152,7 @@ public class HomePage extends BasePage {
         clickSeguro(BOTON_CERRAR_SESION_BY);
 
         // Esperar a que se procese el logout
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            logger.warn("Interrupción durante espera de logout");
-        }
+        esperarProcesamiento(2000);
     }
 
     // ========================================
@@ -319,10 +315,6 @@ public class HomePage extends BasePage {
         }
     }
 
-    // ========================================
-    // MÉTODOS DE BÚSQUEDA
-    // ========================================
-
     /**
      * Realiza una búsqueda usando el campo de búsqueda principal
      */
@@ -347,10 +339,6 @@ public class HomePage extends BasePage {
             logger.warn("Campo de búsqueda no encontrado");
         }
     }
-
-    // ========================================
-    // MÉTODOS DE WIDGETS/DASHBOARD
-    // ========================================
 
     /**
      * Verifica si los widgets del dashboard están cargados
@@ -394,10 +382,6 @@ public class HomePage extends BasePage {
         }
     }
 
-    // ========================================
-    // MÉTODOS DE VALIDACIÓN ESPECÍFICOS
-    // ========================================
-
     /**
      * Valida que todos los elementos principales de la página estén presentes
      */
@@ -424,89 +408,6 @@ public class HomePage extends BasePage {
         logger.info("Usuario autenticado correctamente: {}", autenticado);
         return autenticado;
     }
-
-    // ========================================
-    // MÉTODOS DE NAVEGACIÓN AVANZADA
-    // ========================================
-
-    /**
-     * Navega usando breadcrumbs si están disponibles
-     */
-    @Step("Navegar usando breadcrumb: {textoBreadcrumb}")
-    public void navegarPorBreadcrumb(String textoBreadcrumb) {
-        try {
-            By breadcrumbLocator = By.xpath("//nav[@aria-label='breadcrumb']//a[contains(text(), '" + textoBreadcrumb + "')]");
-
-            if (esElementoVisible(breadcrumbLocator)) {
-                clickSeguro(breadcrumbLocator);
-                logger.info("Navegación por breadcrumb exitosa: {}", textoBreadcrumb);
-            } else {
-                logger.warn("Breadcrumb '{}' no encontrado", textoBreadcrumb);
-            }
-        } catch (Exception e) {
-            logger.error("Error navegando por breadcrumb '{}': {}", textoBreadcrumb, e.getMessage());
-        }
-    }
-
-    /**
-     * Abre un modal o popup específico
-     */
-    @Step("Abrir modal: {nombreModal}")
-    public boolean abrirModal(String nombreModal) {
-        try {
-            By triggerModal = By.cssSelector("[data-toggle='modal'][data-target*='" + nombreModal + "']");
-
-            if (esElementoVisible(triggerModal)) {
-                clickSeguro(triggerModal);
-
-                // Esperar a que el modal aparezca
-                By modal = By.cssSelector(".modal.show, .modal.in");
-                boolean modalAbierto = esperarElementoVisible(modal, TIMEOUT_CORTO) != null;
-
-                logger.info("Modal '{}' abierto: {}", nombreModal, modalAbierto);
-                return modalAbierto;
-            }
-
-            logger.warn("Trigger para modal '{}' no encontrado", nombreModal);
-            return false;
-
-        } catch (Exception e) {
-            logger.error("Error abriendo modal '{}': {}", nombreModal, e.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Cierra modal activo
-     */
-    @Step("Cerrar modal activo")
-    public boolean cerrarModalActivo() {
-        try {
-            By modalActivo = By.cssSelector(".modal.show, .modal.in");
-            By botonCerrar = By.cssSelector(".modal .close, .modal .btn-close");
-
-            if (esElementoVisible(modalActivo) && esElementoVisible(botonCerrar)) {
-                clickSeguro(botonCerrar);
-
-                // Esperar a que el modal desaparezca
-                boolean modalCerrado = esperarElementoInvisible(modalActivo, TIMEOUT_CORTO);
-
-                logger.info("Modal cerrado: {}", modalCerrado);
-                return modalCerrado;
-            }
-
-            logger.debug("No hay modal activo para cerrar");
-            return true;
-
-        } catch (Exception e) {
-            logger.error("Error cerrando modal: {}", e.getMessage());
-            return false;
-        }
-    }
-
-    // ========================================
-    // IMPLEMENTACIÓN DE MÉTODO ABSTRACTO
-    // ========================================
 
     /**
      * Implementación del método abstracto de BasePage
@@ -550,10 +451,6 @@ public class HomePage extends BasePage {
         }
     }
 
-    // ========================================
-    // MÉTODOS DE UTILIDAD
-    // ========================================
-
     /**
      * Espera a que la página home se cargue completamente
      */
@@ -566,49 +463,10 @@ public class HomePage extends BasePage {
         esperarElementoVisible(CONTENIDO_PRINCIPAL_BY, TIMEOUT_MEDIO);
 
         // Esperar a que los elementos dinámicos se carguen
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            logger.warn("Interrupción durante espera de carga");
-        }
+        esperarProcesamiento(1000);
 
         return this;
     }
 
-    /**
-     * Realiza un recorrido básico de verificación de la página
-     */
-    @Step("Realizar recorrido de verificación de HomePage")
-    public boolean realizarRecorridoVerificacion() {
-        try {
-            logger.info("Iniciando recorrido de verificación de HomePage");
-
-            // Verificar carga inicial
-            boolean cargaInicial = esperarCargaCompletaHome() != null && validarPagina();
-            if (!cargaInicial) return false;
-
-            // Verificar elementos principales
-            boolean elementosPrincipales = validarElementosPrincipales();
-            if (!elementosPrincipales) return false;
-
-            // Verificar autenticación si aplica
-            boolean autenticacion = true;
-            if (esElementoVisible(MENU_USUARIO_BY)) {
-                autenticacion = validarAutenticacionUsuario();
-            }
-
-            // Verificar funcionalidad básica del menú
-            boolean menuFuncional = !obtenerElementosMenuPrincipal().isEmpty();
-
-            boolean recorridoExitoso = cargaInicial && elementosPrincipales &&
-                    autenticacion && menuFuncional;
-
-            logger.info("Recorrido de verificación completado: {}", recorridoExitoso);
-            return recorridoExitoso;
-
-        } catch (Exception e) {
-            logger.error("Error en recorrido de verificación: {}", e.getMessage());
-            return false;
-        }
-    }
+    // Método heredado de BasePage - no necesita redefinirse
 }
