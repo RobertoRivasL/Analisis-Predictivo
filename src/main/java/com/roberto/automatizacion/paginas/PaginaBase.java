@@ -22,13 +22,13 @@ import java.util.Set;
  *
  * @author Roberto Rivas Lopez
  */
-public abstract class BasePage {
+public abstract class PaginaBase {
 
-    protected static final Logger logger = LoggerFactory.getLogger(BasePage.class);
+    protected static final Logger logger = LoggerFactory.getLogger(PaginaBase.class);
     protected final WebDriver driver;
     protected final WebDriverWait esperaExplicita;
     protected final Actions acciones;
-    protected final ConfigManager config;
+    protected final ConfigManager configuracion;
 
     // Timeouts configurables
     protected static final Duration TIMEOUT_CORTO = Duration.ofSeconds(5);
@@ -38,10 +38,10 @@ public abstract class BasePage {
     /**
      * Constructor que inicializa los componentes básicos de la página
      */
-    protected BasePage() {
+    protected PaginaBase() {
         this.driver = DriverManager.getInstancia().getDriver();
-        this.config = ConfigManager.getInstancia();
-        this.esperaExplicita = new WebDriverWait(driver, Duration.ofSeconds(config.obtenerTimeout()));
+        this.configuracion = ConfigManager.getInstancia();
+        this.esperaExplicita = new WebDriverWait(driver, Duration.ofSeconds(configuracion.obtenerTimeout()));
         this.acciones = new Actions(driver);
 
         // Inicializar elementos de la página usando PageFactory
