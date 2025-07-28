@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AutomatizacionPruebasSuite" verbose="1" parallel="methods" thread-count="3">
+
+    <parameter name="navegador" value="chrome"/>
+    <parameter name="entorno" value="desarrollo"/>
+    <parameter name="timeout" value="30"/>
+
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+    </listeners>
+
+    <!-- Test de Humo (Smoke Tests) -->
+    <test name="PruebasHumo" preserve-order="true">
+        <parameter name="suite-type" value="smoke"/>
+        <groups>
+            <run>
+                <include name="humo"/>
+                <include name="critico"/>
+            </run>
+        </groups>
+        <classes>
+            <!-- Aquí van las clases de prueba cuando las crees -->
+            <!-- <class name="com.roberto.automatizacion.pruebas.LoginTest"/> -->
+            <!-- <class name="com.roberto.automatizacion.pruebas.NavigationTest"/> -->
+        </classes>
+    </test>
+
+    <!-- Tests de Regresión -->
+    <test name="PruebasRegresion" preserve-order="false">
+        <parameter name="suite-type" value="regresion"/>
+        <groups>
+            <run>
+                <include name="regresion"/>
+                <include name="funcional"/>
+            </run>
+        </groups>
+        <classes>
+            <!-- Aquí van las clases de prueba de regresión -->
+            <!-- <class name="com.roberto.automatizacion.pruebas.FullRegressionTest"/> -->
+        </classes>
+    </test>
+
+    <!-- Tests con Inteligencia (si está habilitada) -->
+    <test name="PruebasInteligencia" preserve-order="false" enabled="false">
+        <parameter name="suite-type" value="inteligencia"/>
+        <groups>
+            <run>
+                <include name="ia"/>
+                <include name="predictivo"/>
+            </run>
+        </groups>
+        <classes>
+            <!-- Aquí van las clases de prueba con IA -->
+            <!-- <class name="com.roberto.automatizacion.pruebas.IntelligentTest"/> -->
+        </classes>
+    </test>
+
+</suite>
